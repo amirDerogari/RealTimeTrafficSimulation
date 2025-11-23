@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.collections.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.canvas.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane style="-fx-background-color: #2b2b2b;" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.team.trafficsimulation.controller.MainController">
+
+  <top>
+        <VBox>
+            <ToolBar style="-fx-background-color: #3c3f41;">
+                <MenuButton style="-fx-text-fill: white;" text="📁 File">
+                    <items>
+                        <MenuItem onAction="#loadConfigFileAction" text="Load Config (.sumocfg)" />
+                        <MenuItem onAction="#loadMapAction" text="Load Network (.net.xml)" />
+                        <MenuItem onAction="#loadRouteFileAction" text="Load Routes (.rou.xml)" />
+                        <SeparatorMenuItem />
+                        <MenuItem onAction="#exitApplication" text="Exit" />
+                    </items>
+                </MenuButton>
+
+                <Separator orientation="VERTICAL" />
+
+                <Button onAction="#startSimulationAction" style="-fx-background-color: #4CAF50; -fx-text-fill: white;" text="▶ Start" />
+                <Button onAction="#stopSimulationAction" style="-fx-background-color: #f44336; -fx-text-fill: white;" text="■ Stop" />
+
+                <Separator orientation="VERTICAL" />
+
+                <Button onAction="#zoomIn" text="🔍 Zoom In" />
+                <Button onAction="#zoomOut" text="🔍 Zoom Out" />
+
+                <Separator orientation="VERTICAL" />
+
+                <Label fx:id="timerLabel" style="-fx-text-fill: #4CAF50; -fx-font-size: 14px; -fx-font-weight: bold;" text="⏱ 00:00:00" />
+            <Button mnemonicParsing="false" onAction="#step" text="▶ Step" />
+            </ToolBar>
+
+            <ToolBar style="-fx-background-color: #2b2b2b;">
+                <Label style="-fx-text-fill: white;" text="🚗 Spawn Settings:" />
+
+                <Label style="-fx-text-fill: #aaaaaa;" text="Interval:" />
+                <Slider fx:id="spawnIntervalSlider" majorTickUnit="3" max="10" min="1" minorTickCount="2" prefWidth="150" showTickLabels="true" showTickMarks="true" value="2" />
+                <Label style="-fx-text-fill: #aaaaaa;" text="seconds" />
+
+                <Separator orientation="VERTICAL" />
+
+                <CheckBox fx:id="autoSpawnCheckbox" selected="true" style="-fx-text-fill: white;" text="Auto Spawn" />
+
+                <Separator orientation="VERTICAL" />
+
+                <Label style="-fx-text-fill: #aaaaaa;" text="Type:" />
+                <ComboBox prefWidth="120">
+                    <items>
+                        <FXCollections fx:factory="observableArrayList">
+
+                        </FXCollections>
+                    </items>
+                </ComboBox>
+
+                <Button style="-fx-background-color: #2196F3; -fx-text-fill: white;" text="➕ Inject Vehicle" />
+
+                <Separator orientation="VERTICAL" />
+
+                <CheckBox fx:id="showDetailsCheckbox" selected="true" style="-fx-text-fill: white;" text="Show Details" />
+            </ToolBar>
+        </VBox>
+    </top>
+
+<center>
+        <StackPane fx:id="canvasContainer" style="-fx-background-color: #1e1e1e;">
+            <Canvas fx:id="mapCanvas" />
+
+            <VBox alignment="TOP_LEFT" pickOnBounds="false" style="-fx-padding: 10;">
+                <Label style="-fx-text-fill: white; -fx-font-weight: bold; -fx-background-color: rgba(0,0,0,0.8); -fx-padding: 5; -fx-background-radius: 5;" text="🖱️ Controls:" />
+                <Label style="-fx-text-fill: #aaaaaa; -fx-background-color: rgba(0,0,0,0.7); -fx-padding: 3; -fx-background-radius: 3;" text="• Drag: Pan map" />
+                <Label style="-fx-text-fill: #aaaaaa; -fx-background-color: rgba(0,0,0,0.7); -fx-padding: 3; -fx-background-radius: 3;" text="• Scroll: Zoom" />
+                <Label style="-fx-text-fill: #aaaaaa; -fx-background-color: rgba(0,0,0,0.7); -fx-padding: 3; -fx-background-radius: 3;" text="• Left Click: Select" />
+                <Label style="-fx-text-fill: #aaaaaa; -fx-background-color: rgba(0,0,0,0.7); -fx-padding: 3; -fx-background-radius: 3;" text="• Double Click: Spawn vehicle" />
+                <Label style="-fx-text-fill: #aaaaaa; -fx-background-color: rgba(0,0,0,0.7); -fx-padding: 3; -fx-background-radius: 3;" text="• Right Click: Context menu" />
+                <StackPane.margin>
+                    <Insets left="10" top="10" />
+                </StackPane.margin>
+            </VBox>
+        </StackPane>
+    </center>
+
+  <right>
+        <VBox prefWidth="300" spacing="15" style="-fx-padding: 15; -fx-background-color: #2b2b2b;">
+
+            <VBox spacing="5" style="-fx-background-color: #3c3f41; -fx-padding: 10; -fx-background-radius: 5;">
+                <Label style="-fx-font-weight: bold; -fx-text-fill: white; -fx-font-size: 14px;" text="ℹ️ Selection Information" />
+                <Separator />
+                <ScrollPane fitToWidth="true" prefHeight="250" style="-fx-background: #3c3f41; -fx-background-color: transparent;">
+                    <Label fx:id="infoLabel" style="-fx-text-fill: #cccccc; -fx-font-family: monospace; -fx-font-size: 11px;" text="Click on a vehicle or traffic light&#10;to see details." wrapText="true" />
+                </ScrollPane>
+            </VBox>
+
+            <VBox spacing="5" style="-fx-background-color: #3c3f41; -fx-padding: 10; -fx-background-radius: 5;">
+                <Label style="-fx-font-weight: bold; -fx-text-fill: white; -fx-font-size: 14px;" text="📊 Simulation Statistics" />
+                <Separator />
+                <Label fx:id="statsLabel" style="-fx-text-fill: #cccccc; -fx-font-family: monospace;" text="No statistics available yet." wrapText="true" />
+            </VBox>
+
+            <VBox spacing="5" style="-fx-background-color: #3c3f41; -fx-padding: 10; -fx-background-radius: 5;">
+                <Label style="-fx-font-weight: bold; -fx-text-fill: white; -fx-font-size: 14px;" text="💡 Tips" />
+                <Separator />
+                <Label style="-fx-text-fill: #aaaaaa; -fx-font-size: 11px;" text="• Load .sumocfg or (.net.xml + .rou.xml)&#10;• Traffic lights appear as colored circles&#10;• Click traffic lights to view/edit properties&#10;• Right-click for context menus&#10;• Vehicles spawn automatically at entry points&#10;• Adjust spawn rate with slider" wrapText="true" />
+            </VBox>
+
+            <VBox spacing="5" style="-fx-background-color: #3c3f41; -fx-padding: 10; -fx-background-radius: 5;">
+                <Label style="-fx-font-weight: bold; -fx-text-fill: white; -fx-font-size: 14px;" text="🎨 Legend" />
+                <Separator />
+                <HBox spacing="5">
+                    <Label style="-fx-background-color: #00ff00; -fx-pref-width: 20; -fx-pref-height: 20;" />
+                    <Label style="-fx-text-fill: #cccccc; -fx-font-size: 11px;" text="Green Light" />
+                </HBox>
+                <HBox spacing="5">
+                    <Label style="-fx-background-color: #ffff00; -fx-pref-width: 20; -fx-pref-height: 20;" />
+                    <Label style="-fx-text-fill: #cccccc; -fx-font-size: 11px;" text="Yellow Light" />
+                </HBox>
+                <HBox spacing="5">
+                    <Label style="-fx-background-color: #ff0000; -fx-pref-width: 20; -fx-pref-height: 20;" />
+                    <Label style="-fx-text-fill: #cccccc; -fx-font-size: 11px;" text="Red Light" />
+                </HBox>
+                <HBox spacing="5">
+                    <Label style="-fx-background-color: #646464; -fx-pref-width: 20; -fx-pref-height: 20;" />
+                    <Label style="-fx-text-fill: #cccccc; -fx-font-size: 11px;" text="Off/Unknown" />
+                </HBox>
+            </VBox>
+        </VBox>
+    </right>
+
+   <bottom>
+        <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-padding: 8; -fx-background-color: #3c3f41;">
+            <Label style="-fx-text-fill: white;" text="📍" />
+            <Label fx:id="statusLabel" style="-fx-text-fill: #cccccc;" text="Status: Ready. Load files to begin." HBox.hgrow="ALWAYS" />
+            <Label style="-fx-text-fill: #888888; -fx-font-size: 10px;" text="SUMO Traffic Simulator v1.0" />
+        </HBox>
+    </bottom>
+
+</BorderPane>
